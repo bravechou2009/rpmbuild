@@ -177,15 +177,20 @@ EOF
 ### Setup path and copy war files into RPM SOURCES area
 echo "### Preparing to copy the following .war files into ./${PACKAGE_NAME}/SOURCES/usr/share/tomcat6/webapps"
 ls -l ${PACKAGE_WAR_FILES}/*.war
+##cleanup old build files####
+rm -rf ./${PACKAGE_NAME}/SOURCES/usr/share/tomcat6/webapps
 mkdir -p ./${PACKAGE_NAME}/SOURCES/usr/share/tomcat6/webapps
 cp ${PACKAGE_WAR_FILES}/*.war ./${PACKAGE_NAME}/SOURCES/usr/share/tomcat6/webapps
-
 mkdir  ./${PACKAGE_NAME}/SOURCES/usr/share/tomcat6/webapps/conf
 if [ -d ${PACKAGE_WAR_FILES}/conf ]
 then
-	cp ${PACKAGE_WAR_FILES}/conf/* ./${PACKAGE_NAME}/SOURCES/usr/share/tomcat6/webapps/conf
+	cp -R ${PACKAGE_WAR_FILES}/conf/* ./${PACKAGE_NAME}/SOURCES/usr/share/tomcat6/webapps/conf
+else 
+	echo "##########No configuration files found  ${PACKAGE_WAR_FILES}/conf/!!!###########"
+	exit 1
 fi
-
+mkdir -p ./${PACKAGE_NAME}/SOURCES/usr/share/tomcat6/webapps/sh
+cp install.sh ./${PACKAGE_NAME}/SOURCES/usr/share/tomcat6/webapps/sh
 
 ### Invoke RPM build
 cd $PACKAGE_NAME
