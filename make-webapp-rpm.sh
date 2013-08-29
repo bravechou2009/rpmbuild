@@ -201,3 +201,11 @@ rpmbuild --verbose --define "_topdir $(pwd)" -ba SPECS/${PACKAGE_NAME}.spec
 cd $STARTING_DIRECTORY
 echo "### RPM is at ${STARTING_DIRECTORY}/${PACKAGE_NAME}/RPMS/noarch/${PACKAGE_NAME}-${PACKAGE_VERSION}-${PACKAGE_RELEASE}.${PACKAGE_ARCH}.rpm"
 ls -l  ${STARTING_DIRECTORY}/${PACKAGE_NAME}/RPMS/noarch/${PACKAGE_NAME}-${PACKAGE_VERSION}-${PACKAGE_RELEASE}.${PACKAGE_ARCH}.rpm
+cp ${STARTING_DIRECTORY}/${PACKAGE_NAME}/RPMS/noarch/${PACKAGE_NAME}-${PACKAGE_VERSION}-${PACKAGE_RELEASE}.${PACKAGE_ARCH}.rpm /erac/rpm_Application_Packages/apps
+if [ $? -eq 0 ]
+then
+	echo "${PACKAGE_NAME}-${PACKAGE_VERSION}-${PACKAGE_RELEASE}.${PACKAGE_ARCH}.rpm pushed to /erac/rpm_Application_Packages/apps"
+else
+	echo "ERROR: ${PACKAGE_NAME}-${PACKAGE_VERSION}-${PACKAGE_RELEASE}.${PACKAGE_ARCH}.rpm could not be pushed to /erac/rpm_Application_Packages/apps verify permissions"
+	exit 1
+fi
