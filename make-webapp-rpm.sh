@@ -1,4 +1,5 @@
 #!/bin/sh
+set -x
 
 PACKAGE_NAME=${PACKAGE_NAME:-''}
 PACKAGE_SUMMARY=${PACKAGE_NAME:-''}
@@ -173,6 +174,58 @@ directory:
 
 EOF
 
+### HEREDOC install.sh ###
+
+cat << 'EOT' > /tmp/install.sh
+
+#!/bin/bash
+##############################################
+## Environment Setup
+#-------------------
+CL_PARAMS=$#
+##TEST##BLD_CONFDIR=/home/e482fh/ipclab-test/usr/share/tomcat6/webapps/conf
+##TEST##DEST_CONFDIR=/home/e482fh/ipclab-test/etc/tomcat6
+BLD_CONFDIR=/usr/share/tomcat6/webapps/conf
+DEST_CONFDIR=/etc/tomcat6
+#-------------------
+usage()
+{
+   echo
+   echo "USAGE:  install.sh <env>"
+   echo
+   exit 99;
+}
+case $CL_PARAMS in
+   1) ENV=$1
+      ;;
+   *) usage
+      ;;
+esac
+if [ -d $BLD_CONFDIR/$ENV ]; then
+   fc=`find $BLD_CONFDIR/$ENV -type f -print 2>/dev/null | wc -l`
+   if [ $fc -gt 0 ]; then
+      for file in `find $BLD_CONFDIR/$ENV -type f -print 2>/dev/null`
+      do
+#         echo cp $file $DEST_CONFDIR/.
+         cp $file $DEST_CONFDIR/.
+
+         if [ $? -eq 0 ]; then
+            echo "Successfully copied file $file"
+         else
+            echo "ERROR: Problem copying $file"
+         fi
+      done
+   else
+      echo "No files found in $BLD_CONFDIR/$ENV"
+   fi
+else
+   echo "$BLD_CONFDIR/$ENV does not exist!  Please verify environment and rerun."
+   exit 2
+fi
+
+EOT
+
+### HEREDOC install.sh ####
 
 ### Setup path and copy war files into RPM SOURCES area
 echo "### Preparing to copy the following .war files into ./${PACKAGE_NAME}/SOURCES/usr/share/tomcat6/webapps"
@@ -190,7 +243,7 @@ else
 	exit 1
 fi
 mkdir -p ./${PACKAGE_NAME}/SOURCES/usr/share/tomcat6/webapps/sh
-cp install.sh ./${PACKAGE_NAME}/SOURCES/usr/share/tomcat6/webapps/sh
+cp /tmp/install.sh ./${PACKAGE_NAME}/SOURCES/usr/share/tomcat6/webapps/sh
 
 ### Invoke RPM build
 cd $PACKAGE_NAME
@@ -209,3 +262,4 @@ else
 	echo "ERROR: ${PACKAGE_NAME}-${PACKAGE_VERSION}-${PACKAGE_RELEASE}.${PACKAGE_ARCH}.rpm could not be pushed to /erac/rpm_Application_Packages/apps verify permissions"
 	exit 1
 fi
+
