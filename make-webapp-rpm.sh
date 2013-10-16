@@ -148,7 +148,7 @@ cp -r ../SOURCES \$RPM_BUILD_ROOT
 # Contains a list of the files that are part of the package
 # See useful directives such as attr here: http://www.rpm.org/max-rpm-snapshot/s1-rpm-specref-files-list-directives.html
 %files
-%defattr(-, tomcat, tomcat, -) 
+%defattr(755, tomcat, tomcat, -) 
 /usr/share/tomcat6/webapps/*
 /usr/share/tomcat6/webapps/conf/*
 
