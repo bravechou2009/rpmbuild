@@ -155,6 +155,11 @@ cp -r ../SOURCES \$RPM_BUILD_ROOT
 # Used to store any changes between versions
 %changelog
 
+%postun
+rm -rf /var/lib/tomcat6/webapps/*
+rm -rf /var/cache/tomcat6/webapps/*
+
+
 EOSpec
 ) > $SPECFILE
 
@@ -201,14 +206,13 @@ case $CL_PARAMS in
    *) usage
       ;;
 esac
+
 if [ -d $BLD_CONFDIR/$ENV ]; then
    fc=`find $BLD_CONFDIR/$ENV -type f -print 2>/dev/null | wc -l`
    if [ $fc -gt 0 ]; then
       for file in `find $BLD_CONFDIR/$ENV -type f -print 2>/dev/null`
       do
-#         echo cp $file $DEST_CONFDIR/.
          cp $file $DEST_CONFDIR/.
-
          if [ $? -eq 0 ]; then
             echo "Successfully copied file $file"
          else
